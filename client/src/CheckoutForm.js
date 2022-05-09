@@ -55,9 +55,7 @@ export default function CheckoutForm() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <LinkAuthenticationElement options={{
-        defaultValues: { email: "jenny.rosen@example.com" }
-      }} onChange={handleEmailChange} />
+      <LinkAuthenticationElement onChange={handleEmailChange} />
 
 
       <h4>Shipping details</h4>

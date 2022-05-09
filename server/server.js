@@ -43,9 +43,15 @@ app.get('/create-payment-intent', async (req, res) => {
   // [0] https://stripe.com/docs/api/payment_intents/create
   console.log(req.cookies);
   try {
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      {customer: 'cus_Lexth1xyUzOfhc'},
+      {apiVersion: '2020-08-27'}
+    );
+
     const paymentIntent = await stripe.paymentIntents.create({
       currency: 'usd',
       amount: 5999,
+      customer: 'cus_Lexth1xyUzOfhc',
       payment_method_types: ['card', 'us_bank_account', 'link'],
       payment_method_options: {
         link: {
@@ -58,6 +64,10 @@ app.get('/create-payment-intent', async (req, res) => {
     // Send publishable key and PaymentIntent details to client
     res.send({
       clientSecret: paymentIntent.client_secret,
+      customerOptions: {
+        customer: 'cus_Lexth1xyUzOfhc',
+        ephemeralKey: ephemeralKey.secret
+      }
     });
   } catch (e) {
     console.error(e)
