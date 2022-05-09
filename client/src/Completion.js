@@ -9,8 +9,8 @@ function Completion(props) {
 
     stripePromise.then(async (stripe) => {
       const url = new URL(window.location);
-      const clientSecret = url.searchParams.get('payment_intent_client_secret');
-      const { error, paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
+      const paymentIntentId = url.searchParams.get('payment_intent');
+      const { error, paymentIntent } = await fetch(`/retrieve-payment-intent?payment_intent=${paymentIntentId}`).then(r => r.json())
 
       setMessageBody(error ? `> ${error.message}` : (
         <>&gt; Payment {paymentIntent.status}: <a href={`https://dashboard.stripe.com/test/payments/${paymentIntent.id}`} target="_blank" rel="noreferrer">{paymentIntent.id}</a></>

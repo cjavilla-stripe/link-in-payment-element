@@ -1,14 +1,17 @@
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const app = express();
 const {resolve} = require('path');
 // Replace if using a different env file or config
 const env = require('dotenv').config({path: './.env'});
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2020-08-27',
+  apiVersion: '2020-08-27;link_beta=v1',
 });
+const LINK_PERSISTENT_TOKEN_COOKIE_NAME = 'stripe.link.persistent_token';
 
 app.use(express.static(process.env.STATIC_DIR));
+app.use(cookieParser());
 app.use(
   express.json({
     // We need the raw body to verify webhook signatures.
@@ -38,11 +41,18 @@ app.get('/create-payment-intent', async (req, res) => {
   // See the documentation [0] for the full list of supported parameters.
   //
   // [0] https://stripe.com/docs/api/payment_intents/create
+  console.log(req.cookies);
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       currency: 'usd',
       amount: 5999,
-      automatic_payment_methods: { enabled: true }
+      payment_method_types: ['card', 'us_bank_account', 'link'],
+      payment_method_options: {
+        link: {
+          persistent_token: req.cookies[LINK_PERSISTENT_TOKEN_COOKIE_NAME],
+        }
+      }
+      // automatic_payment_methods: { enabled: true }
     });
 
     // Send publishable key and PaymentIntent details to client
@@ -58,6 +68,44 @@ app.get('/create-payment-intent', async (req, res) => {
     });
   }
 });
+
+app.get('/retrieve-payment-intent', async (req, res) => {
+  console.log("Payment next route");
+  try {
+    const intent = await stripe.paymentIntents.retrieve(
+      req.query.payment_intent,
+      {
+        expand: ["payment_method"],
+      }
+    );
+
+    if(intent.status == 'succeeded' || intent.status == 'processing') {
+      const token = intent.payment_method?.link?.persistent_token
+      console.log({ token })
+      if(!!token) {
+        res.cookie(
+          LINK_PERSISTENT_TOKEN_COOKIE_NAME,
+          token,
+          {
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV !== "development",
+            httpOnly: true,
+            expires: new Date(Date.now() + 90 * 24 * 3600 * 1000),
+          }
+        )
+      }
+    }
+
+    res.send(intent);
+  } catch(e) {
+    console.error(e)
+    return res.render({
+      error: {
+        message: e.message
+      }
+    })
+  }
+})
 
 // Expose a endpoint as a webhook handler for asynchronous events.
 // Configure your webhook in the stripe developer dashboard
