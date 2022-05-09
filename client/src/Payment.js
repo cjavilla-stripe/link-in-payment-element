@@ -28,7 +28,7 @@ function Payment(props) {
   return (
     <>
       <h1 style={{fontFamily: "Pacifico"}}>Pasha Book</h1>
-      <p>Learn photography: <strong>USD 9.99</strong></p>
+      <p>Learn photography: <strong>USD 59.99</strong></p>
       {clientSecret && stripePromise && (
         <Elements stripe={stripePromise} options={{ clientSecret, appearance, fonts }}>
           <CheckoutForm />
