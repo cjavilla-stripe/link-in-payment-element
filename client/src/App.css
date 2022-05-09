@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif&display=swap');
 
 :root {
   --light-grey: #F6F9FC;
@@ -9,11 +9,12 @@
 
 body {
   padding: 20px;
-  font-family: 'Raleway';
+  font-family: 'IBM Plex Serif';
   display: flex;
   justify-content: center;
-  font-size: 1.2em;
-  color: var(--dark-terminal-color);
+  font-size: .93em;
+  font-weight: 400;
+  color: rgb(48, 49, 61);
 }
 
 main {
@@ -54,7 +55,7 @@ button:disabled {
 
 input, select {
   display: block;
-  font-size: 1.1em;
+  font-size: 1em;
   width: 100%;
   margin-bottom: 10px;
 }

@@ -45,10 +45,38 @@ export default function CheckoutForm() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
+      <div>
+        <label>Email</label>
+        <input type="email" />
+      </div>
+
+      <h4>Shipping details</h4>
+      <div>
+        <label>Address</label>
+        <input type="text" autoComplete="address_line1" name="line1" />
+      </div>
+      <div>
+        <label>City</label>
+        <input type="text" autoComplete="address_level2" name="city" />
+      </div>
+      <div>
+        <label>State</label>
+        <input type="text" autoComplete="address_level1" name="state" />
+      </div>
+      <div>
+        <label>Postal code</label>
+        <input type="text" autoComplete="postal-code" name="postal_code" />
+      </div>
+      <div>
+        <label>Country</label>
+        <input type="text" autoComplete="country" name="country" />
+      </div>
+
+      <h4>Payment details</h4>
       <PaymentElement  />
       <button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          {isLoading ? <div className="spinner" id="spinner">...</div> : "Buy today"}
         </span>
       </button>
       {/* Show any error or success messages */}
