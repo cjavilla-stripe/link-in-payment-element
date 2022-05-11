@@ -1,5 +1,7 @@
 import {
-  PaymentElement
+  LinkAuthenticationElement,
+  PaymentElement,
+  ShippingAddressElement
 } from '@stripe/react-stripe-js'
 import {useState} from 'react'
 import {useStripe, useElements} from '@stripe/react-stripe-js';
@@ -43,34 +45,22 @@ export default function CheckoutForm() {
     setIsLoading(false);
   }
 
+  const handleEmailChange = async (e) => {
+    console.log(e);
+  }
+
+  const handleAddressChange = async (e) => {
+    console.log(e);
+  }
+
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <div>
-        <label>Email</label>
-        <input type="email" />
-      </div>
+      <LinkAuthenticationElement onChange={handleEmailChange} />
+
 
       <h4>Shipping details</h4>
-      <div>
-        <label>Address</label>
-        <input type="text" autoComplete="address_line1" name="line1" />
-      </div>
-      <div>
-        <label>City</label>
-        <input type="text" autoComplete="address_level2" name="city" />
-      </div>
-      <div>
-        <label>State</label>
-        <input type="text" autoComplete="address_level1" name="state" />
-      </div>
-      <div>
-        <label>Postal code</label>
-        <input type="text" autoComplete="postal-code" name="postal_code" />
-      </div>
-      <div>
-        <label>Country</label>
-        <input type="text" autoComplete="country" name="country" />
-      </div>
+      <ShippingAddressElement onChange={handleAddressChange} options={{allowedCountries: ['US']}} />
+
 
       <h4>Payment details</h4>
       <PaymentElement  />
